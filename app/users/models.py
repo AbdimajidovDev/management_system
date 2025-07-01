@@ -38,7 +38,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         superadmin = 'sa', 'Super Admin'
         admin = 'a', 'Admin'
         teacher = 't', 'Teacher'
-        student = 's', 'Student'
 
     avatar = models.ImageField(upload_to="avatar/",
                                validators=[FileExtensionValidator(["jpg", "jpeg", "png", "heic", "heif", "svg", "webp"])],
@@ -47,9 +46,9 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     last_name = models.CharField(max_length=255)
     email = models.EmailField(null=True)
     phone_number = models.CharField(max_length=13, unique=True)
-    role = models.CharField(max_length=2, choices=UserRoles.choices, default=UserRoles.student)
+    role = models.CharField(max_length=2, choices=UserRoles.choices, default=UserRoles.teacher)
     password = models.CharField(max_length=123)
-    salary = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    salary = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'phone_number'
