@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # local apps
     'app.users',
     'app.groups',
+    'app.students',
 ]
 
 MIDDLEWARE = [
