@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -11,6 +12,6 @@ class CreateUserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = CreateUserSerializer
 
-
+@extend_schema(tags=['login'])
 class LoginView(TokenObtainPairView):
     serializer_class = LoginSerializer

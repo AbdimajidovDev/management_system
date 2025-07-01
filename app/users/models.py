@@ -29,15 +29,16 @@ class UserManager(BaseUserManager):
     def create_superuser(self, phone_number, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('role', User.UserRoles.superadmin)
         return self.create_user(phone_number, password, **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     class UserRoles(models.TextChoices):
-        superadmin = 'sa', 'superadmin'
-        admin = 'a', 'admin'
-        teacher = 't', 'teacher'
-        student = 's', 'student'
+        superadmin = 'sa', 'Super Admin'
+        admin = 'a', 'Admin'
+        teacher = 't', 'Teacher'
+        student = 's', 'Student'
 
     avatar = models.ImageField(upload_to="avatar/",
                                validators=[FileExtensionValidator(["jpg", "jpeg", "png", "heic", "heif", "svg", "webp"])],
@@ -48,6 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     phone_number = models.CharField(max_length=13, unique=True)
     role = models.CharField(max_length=2, choices=UserRoles.choices, default=UserRoles.student)
     password = models.CharField(max_length=123)
+    salary = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'phone_number'
@@ -55,7 +57,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     objects = UserManager()
 
     def __str__(self):
-        return self.full_name
+        return f"{self.role} - {self.full_name}"
 
     @property
     def full_name(self):
