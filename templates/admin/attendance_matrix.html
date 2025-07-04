@@ -1,0 +1,87 @@
+{% extends "admin/change_list.html" %}
+{% load attendance_extras %}
+{% load static %}
+{% block content %}
+
+  <h2>Davomat</h2>
+
+<!--  <form method="get">-->
+<!--    <label for="group_select">Guruh tanlang:</label>-->
+<!--    <select name="group_id" id="group_select" onchange="this.form.submit()">-->
+<!--      <option value="">-- Guruh tanlang --</option>-->
+<!--      {% for g in groups %}-->
+<!--        <option value="{{ g.id }}" {% if group and group.id == g.id %} selected {% endif %}>-->
+<!--          {{ g.name }}-->
+<!--        </option>-->
+<!--      {% endfor %}-->
+<!--    </select>-->
+<!--  </form>-->
+<div>
+<form method="get">
+  <label>Guruhni tanlang:</label>
+  <select name="group" onchange="this.form.submit()">
+    {% for g in groups %}
+      <option value="{{ g.id }}" {% if group.id == g.id %}selected{% endif %}>{{ g.name }}</option>
+    {% endfor %}
+  </select>
+</form>
+</div>
+</div>
+  {% if group %}
+    <form method="post" action="{% url 'save_attendance_matrix' %}">
+      {% csrf_token %}
+      <input type="hidden" name="group_id" value="{{ group.id }}">
+
+      <table class="table table-bordered mt-3">
+        <thead>
+          <tr>
+            <th>O'quvchilar</th>
+            {% for d in dates %}
+              <th>{{ d|date:"d-m" }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in students %}
+            <tr>
+              <td>{{ student.full_name }}</td>
+              {% for d in dates %}
+                <td>
+                  <input type="checkbox"
+                         name="attendance"
+                         value="{{ student.id }}_{{ d|date:'Y-m-d' }}"
+                         {% if attendance_data|dict_get:student|dict_get:d == 'p' %}checked{% endif %}>
+                </td>
+
+<!--              <td>-->
+<!--                <label>-->
+<!--                  <input type="radio"-->
+<!--                         name="attendance_{{ student.id }}_{{ d|date:'Y-m-d' }}"-->
+<!--                         value="{{ student.id }}_{{ d|date:'Y-m-d' }}_p"-->
+<!--                         {% if attendance_data|dict_get:student|dict_get:d == 'p' %}checked{% endif %}>-->
+<!--                  ✅-->
+<!--                </label>-->
+<!--                <label>-->
+<!--                  <input type="radio"-->
+<!--                         name="attendance_{{ student.id }}_{{ d|date:'Y-m-d' }}"-->
+<!--                         value="{{ student.id }}_{{ d|date:'Y-m-d' }}_a"-->
+<!--                         {% if attendance_data|dict_get:student|dict_get:d == 'a' %}checked{% endif %}>-->
+<!--                  ❌-->
+<!--                </label>-->
+<!--              </td>-->
+
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <button type="submit" class="btn btn-primary">Saqlash</button>
+    </form>
+  {% else %}
+    <div class="alert alert-danger mt-3">
+      Guruh tanlanmagan yoki mavjud emas.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
