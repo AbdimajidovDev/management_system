@@ -7,3 +7,4 @@ class AttendanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendance
         fields = ('id', 'student', 'group', 'date', 'status')
+

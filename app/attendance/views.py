@@ -81,7 +81,7 @@ def save_attendance_matrix(request):
                 status='p'
             )
 
-        return redirect('/admin/attendance/attendance/')
-        # return redirect(f"/admin/attendance/attendance/?group={group.id}")
+        # return redirect('/admin/attendance/attendance/')
+        return redirect(f"/admin/attendance/attendance/?group={group.id}")
 
     return HttpResponseBadRequest("Faqat POST so‘rovlarga ruxsat bor.")

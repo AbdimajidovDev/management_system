@@ -43,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
                                null=True, blank=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    email = models.EmailField(null=True)
+    email = models.EmailField(null=True, blank=True)
     phone_number = models.CharField(max_length=13, unique=True)
     role = models.CharField(max_length=2, choices=UserRoles.choices, default=UserRoles.teacher)
     password = models.CharField(max_length=123)
