@@ -17,7 +17,7 @@ class UserAdmin(UserAdmin):
     fieldsets = (
         (None, {"fields": ("phone_number", "password")}),
         ("Shaxsiy ma'lumotlar", {"fields": ("first_name", "last_name", "email")}),
-        ("Ruxsatlar", {"fields": ("role", "is_staff", "is_superuser")}),
+        ("Ruxsatlar", {"fields": ("role", "is_staff", "is_superuser", "user_permissions", "groups")}),
     )
 
     add_fieldsets = (

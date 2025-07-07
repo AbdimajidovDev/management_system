@@ -9,4 +9,5 @@ router.register('user', CreateUserViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('login/', LoginView.as_view(), name='login'),
+    path('teachers/', TeacherListView.as_view(), name='teacher-list'),
 ]

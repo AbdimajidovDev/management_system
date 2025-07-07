@@ -1,10 +1,10 @@
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from app.users.models import User
 from app.users.serializers import CreateUserSerializer, LoginSerializer
-from app.users.utility import IsSuperAdmin
+from app.users.utility import IsSuperAdmin, IsAdminOrSuperAdmin
 
 
 class CreateUserViewSet(viewsets.ModelViewSet):
@@ -15,3 +15,11 @@ class CreateUserViewSet(viewsets.ModelViewSet):
 @extend_schema(tags=['login'])
 class LoginView(TokenObtainPairView):
     serializer_class = LoginSerializer
+
+
+# @extend_schema(tags=[''])
+class TeacherListView(generics.ListAPIView):
+    queryset = User.objects.filter(role='t')
+    serializer_class = CreateUserSerializer
+    permission_classes = (IsAdminOrSuperAdmin,)
+

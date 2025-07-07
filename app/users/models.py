@@ -7,7 +7,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 
-
 class BaseModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -35,7 +34,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     class UserRoles(models.TextChoices):
-        superadmin = 'sa', 'Super Admin'
+        superadmin = 's', 'Super Admin'
         admin = 'a', 'Admin'
         teacher = 't', 'Teacher'
 
