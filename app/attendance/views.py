@@ -61,18 +61,23 @@ def save_attendance_matrix(request):
             return HttpResponseBadRequest("Group mavjud emas.")
 
         selected = request.POST.getlist('attendance')  # masalan ['1_2025-07-03', '3_2025-07-01']
+        user = request.user
+        today = datetime.today()
 
         Attendance.objects.filter(group=group).delete()
 
         for item in selected:
             student_id, date_str = item.split('_')
             student = Student.objects.get(id=student_id)
-            date = datetime.strptime(date_str, "%Y-%m-%d")
+            d = datetime.strptime(date_str, "%Y-%m-%d").date()
+
+            if user.role == User.UserRoles.teacher and d != today:
+                continue
 
             Attendance.objects.create(
                 student=student,
                 group=group,
-                date=date,
+                date=d,
                 status='p'
             )
 

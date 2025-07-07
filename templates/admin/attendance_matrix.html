@@ -46,12 +46,17 @@
             <tr>
               <td>{{ student.full_name }}</td>
               {% for d in dates %}
-                <td>
-                  <input type="checkbox"
-                         name="attendance"
-                         value="{{ student.id }}_{{ d|date:'Y-m-d' }}"
-                         {% if attendance_data|dict_get:student|dict_get:d == 'p' %}checked{% endif %}>
-                </td>
+              <td>
+                <input type="checkbox" name="attendance" value="{{ student.id }}_{{ d|date:'Y-m-d' }}"
+                {% if attendance_data|dict_get:student|dict_get:d == 'p' %}checked{% endif %}
+                {% if request.user.role == 't' and d != today %} disabled {% endif %}>
+              </td>
+<!--                              <td>-->
+<!--                  <input type="checkbox"-->
+<!--                         name="attendance"-->
+<!--                         value="{{ student.id }}_{{ d|date:'Y-m-d' }}"-->
+<!--                         {% if attendance_data|dict_get:student|dict_get:d == 'p' %}checked{% endif %}>-->
+<!--                </td>-->
 
 <!--              <td>-->
 <!--                <label>-->
