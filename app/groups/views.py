@@ -6,7 +6,7 @@ from app.users.utility import *
 
 
 class GroupViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsSuperAdmin | IsAdmin]
+    permission_classes = (IsAdminOrSuperAdmin, )
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
