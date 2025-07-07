@@ -13,17 +13,10 @@ import os
 from datetime import timedelta
 from pathlib import Path
 from decouple import config, Csv
-import environ
 
-
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-# env = environ.Env()
-# environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/

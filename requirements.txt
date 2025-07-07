@@ -10,11 +10,8 @@ jsonschema==4.24.0
 jsonschema-specifications==2025.4.1
 phonenumbers==9.0.8
 pillow==11.2.1
-psycopg2==2.9.10
-psycopg2-binary==2.9.10
 PyJWT==2.9.0
 python-decouple==3.8
-python-environ==0.4.54
 PyYAML==6.0.2
 referencing==0.36.2
 rpds-py==0.25.1
