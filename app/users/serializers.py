@@ -15,14 +15,13 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name', 'phone_number', 'email', 'role', 'password', 'confirm_password')
+        fields = ('id', 'first_name', 'last_name', 'phone_number', 'salary', 'email', 'role', 'password', 'confirm_password')
         # extra_kwargs = {'phone_number': {'validators': []}
 
     def validate(self, attrs):
         password = attrs.get('password', None)
         confirm_password = attrs.get('confirm_password', None)
-        # first_name = attrs.get('first_name', None)
-        # last_name = attrs.get('last_name', None)
+        salary = attrs.get('salary', None)
 
         if password != confirm_password:
             data = {
@@ -33,6 +32,9 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
         if password:
             validate_password(password)
+
+        if salary.isalnum():
+            raise ValidationError({'salary': 'Salary is invalid'})
 
         return attrs
 
