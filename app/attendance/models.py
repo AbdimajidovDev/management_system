@@ -10,10 +10,11 @@ class Attendance(BaseModel):
     class Status(models.TextChoices):
         PRESENT = 'p', 'present'
         ABSENT = 'a', 'absent'
+        EMPTY = 'e', 'empty'
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='attendances')
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='attendances')
-    status = models.CharField(max_length=1, choices=Status.choices, default=Status.PRESENT)
+    status = models.CharField(max_length=1, choices=Status.choices, default=Status.EMPTY)
     date = models.DateField()
 
     class Meta:
@@ -22,3 +23,5 @@ class Attendance(BaseModel):
 
     def __str__(self):
         return f"{self.student.full_name} - {self.date} - {self.status}"
+
+
