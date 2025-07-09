@@ -28,6 +28,7 @@ urlpatterns = [
     path('students/', include('app.students.urls')),
     path('attendance/', include('app.attendance.urls')),
     path('billing/', include('app.payments.urls')),
+    path('reports/', include('app.reports.urls')),
 
     # JWT
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # login
