@@ -24,11 +24,10 @@ class CreateUserSerializer(serializers.ModelSerializer):
         salary = attrs.get('salary', None)
 
         if password != confirm_password:
-            data = {
+            raise ValidationError({
                 'success': False,
                 'message': 'Passwords do not match',
-            }
-            raise ValidationError(data)
+            })
 
         if password:
             validate_password(password)
@@ -40,33 +39,29 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     def validate_phone_number(self, phone_number):
         if not phone_number:
-            data = {
+            raise ValidationError({
                 'success': False,
                 'message': "Phone number is required"
-            }
-            raise ValidationError(data)
+            })
 
         if phone_number and User.objects.filter(phone_number=phone_number).exists():
-            data = {
+            raise ValidationError({
                 'status': False,
                 'message': "Phone number is already registered"
-            }
-            raise ValidationError(data)
+            })
 
         try:
             parsed_number = phonenumbers.parse(phone_number)
             if not phonenumbers.is_valid_number(parsed_number):
-                data = {
+                raise ValidationError({
                     'success': False,
                     'message': "Phone number is invalid"
-                }
-                raise ValidationError(data)
+                })
         except phonenumbers.NumberParseException:
-            data = {
+            raise ValidationError({
                 'success': False,
                 'message': "Your phone number is in the wrong format.. (Correct format: +998xxxxxxxxx)"
-            }
-            raise ValidationError(data)
+            })
         return phone_number
 
     def to_representation(self, instance):
@@ -91,33 +86,29 @@ class LoginSerializer(TokenObtainPairSerializer):
         try:
             parsed_number = phonenumbers.parse(phone_number)
             if not phonenumbers.is_valid_number(parsed_number):
-                data = {
+                raise ValidationError({
                     'success': False,
                     'message': "Phone number is invalid"
-                }
-                raise ValidationError(data)
+                })
         except phonenumbers.NumberParseException:
-            data = {
+            raise ValidationError({
                 'success': False,
                 'message': "Your phone number is in the wrong format.. (Correct format: +998xxxxxxxxx)"
-            }
-            raise ValidationError(data)
+            })
 
         if not phone_number or not password:
-            data = {
+            raise ValidationError({
                 'success': False,
                 'message': "Phone number and password are required"
-            }
-            raise ValidationError(data)
+            })
 
         user = authenticate(request=self.context.get('request'), phone_number=phone_number, password=password)
 
         if user is None:
-            data = {
+            raise ValidationError({
                 'success': False,
                 'message': "Username or password is incorrect"
-            }
-            raise ValidationError(data)
+            })
 
         self.user = user
         data = super().validate(attrs)

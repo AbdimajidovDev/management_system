@@ -17,6 +17,7 @@ class AttendanceInline(admin.TabularInline):
     model = Attendance
     form = AttendanceForm
     extra = 0
+    ordering = ['date']
 
 # # # -------------------------------------------------------------------------------------------->
 
@@ -27,53 +28,45 @@ class AttendanceAdmin(admin.ModelAdmin):
         user = request.user
         students = Student.objects.none()
 
-        # Faqat teacherlar uchun o‘z guruhlarini ko‘rsat
         if user.role == 't':
             groups = Group.objects.filter(teacher=user)
-            group_id = request.GET.get('group')
-            if group_id:
-                group = groups.filter(id=group_id).first()
-            else:
-                group = groups.first()  # default
-
-            if group:
-                students = Student.objects.filter(group=group)
         else:
-            # admin yoki superadmin bo‘lsa, barcha
             groups = Group.objects.all()
-            group_id = request.GET.get('group')
-            group = Group.objects.filter(id=group_id).first() if group_id else groups.first()
-            if group:
-                students = Student.objects.filter(group=group)
 
-        # Sanalarni generatsiya qilamiz
-        if group.type == 'e':
-            start_date = group.start_date
-            if int(str(group.start_date).split('-')[-1]) % 2 != 0:
-                start_date += timedelta(days=1)
-            end_date = group.end_date
-            days = end_date - start_date
-            dates = [start_date + timedelta(days=i) for i in range(0, days.days + 1, 2)]
-        elif group.type == 'o':
-            start_date = group.start_date
-            if int(str(group.start_date).split('-')[-1]) % 2 == 0:
-                start_date += timedelta(days=1)
-            end_date = group.end_date
-            days = end_date - start_date
-            dates = [start_date + timedelta(days=i) for i in range(0, days.days + 1, 2)]
-        else:
-            start_date = group.start_date
-            end_date = group.end_date
-            days = end_date - start_date
-            dates = [start_date + timedelta(days=i) for i in range(days.days + 1)]
+        group_id = request.GET.get('group')
+        group = groups.filter(id=group_id).first() if group_id else groups.first()
 
-        # Davomat ma'lumotlari
+        if group:
+            students = Student.objects.filter(group=group)
+
+        start_date = group.start_date
+        end_date = group.end_date
+
+        # Tizimga asoslangan kunlar
+        if group.type == 'e':  # juft
+            if start_date.day % 2 != 0:
+                start_date += timedelta(days=1)
+            days = (end_date - start_date).days + 1
+            dates = [start_date + timedelta(days=i) for i in range(0, days, 2) if
+                     (start_date + timedelta(days=i)).weekday() != 6]
+        elif group.type == 'o':  # toq
+            if start_date.day % 2 == 0:
+                start_date += timedelta(days=1)
+            days = (end_date - start_date).days + 1
+            dates = [start_date + timedelta(days=i) for i in range(0, days, 2) if
+                     (start_date + timedelta(days=i)).weekday() != 6]
+        else:  # har kuni
+            days = (end_date - start_date).days + 1
+            dates = [start_date + timedelta(days=i) for i in range(days) if
+                     (start_date + timedelta(days=i)).weekday() != 6]
+
+        # Attendance statuslarini yig'amiz
         attendance_data = {}
         for student in students:
-            attendance_data[student] = {}
+            attendance_data[student.id] = {}
             for d in dates:
-                a = Attendance.objects.filter(student=student, date=d).first()
-                attendance_data[student][d] = a.status if a else None
+                att = Attendance.objects.filter(student=student, group=group, date=d).first()
+                attendance_data[student.id][d.strftime('%Y-%m-%d')] = att.status if att else 'e'
 
         extra_context = extra_context or {}
         extra_context.update({
@@ -82,7 +75,8 @@ class AttendanceAdmin(admin.ModelAdmin):
             'attendance_data': attendance_data,
             'group': group,
             'groups': groups,
-            'today': date.today(),
+            'today': date.today().strftime('%Y-%m-%d'),
+            'user': request.user,
         })
         return super().changelist_view(request, extra_context=extra_context)
 

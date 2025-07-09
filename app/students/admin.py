@@ -7,7 +7,7 @@ from app.users.models import User
 
 # @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'phone_number', 'group', 'is_paid')
+    list_display = ('full_name', 'phone_number', 'parents_phone_number', 'group', 'is_paid')
     list_display_links = ('full_name',)
     search_fields = ('full_name',)
     list_filter = ('group', 'is_paid')

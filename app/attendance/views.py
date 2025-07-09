@@ -53,35 +53,30 @@ def save_attendance_matrix(request):
     if request.method == 'POST':
         group_id = request.POST.get('group_id')
         if not group_id:
-            return HttpResponseBadRequest("Group ID topilmadi.")
+            return HttpResponseBadRequest("Guruh ID topilmadi.")
 
         try:
             group = Group.objects.get(id=group_id)
         except Group.DoesNotExist:
-            return HttpResponseBadRequest("Group mavjud emas.")
+            return HttpResponseBadRequest("Bunday guruh mavjud emas.")
 
-        selected = request.POST.getlist('attendance')  # masalan ['1_2025-07-03', '3_2025-07-01']
-        user = request.user
-        today = datetime.today()
+        selected = request.POST.getlist('attendance')  # ['1_2025-07-08_p', '2_2025-07-08_a', ...]
 
         Attendance.objects.filter(group=group).delete()
 
         for item in selected:
-            student_id, date_str = item.split('_')
+            student_id, date_str, status = item.split('_')
             student = Student.objects.get(id=student_id)
-            d = datetime.strptime(date_str, "%Y-%m-%d").date()
-
-            if user.role == User.UserRoles.teacher and d != today:
-                continue
+            date = datetime.strptime(date_str, "%Y-%m-%d").date()
 
             Attendance.objects.create(
                 student=student,
                 group=group,
-                date=d,
-                status='p'
+                date=date,
+                status=status
             )
+        print(group.name, group_id)
 
-        # return redirect('/admin/attendance/attendance/')
-        return redirect(f"/admin/attendance/attendance/?group={group.id}")
+        return redirect(f"/admin/attendance/attendance/?group_id={group_id}")
 
     return HttpResponseBadRequest("Faqat POST so‘rovlarga ruxsat bor.")
