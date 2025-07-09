@@ -1,22 +1,8 @@
-{% extends "admin/change_list.html" %}
-{% load attendance_extras %}
+{% extends "admin/base_site.html" %}
 {% load static %}
+{% load attendance_extras %}
 {% block content %}
 
-  <h2>Davomat</h2>
-
-<!--  <form method="get">-->
-<!--    <label for="group_select">Guruh tanlang:</label>-->
-<!--    <select name="group_id" id="group_select" onchange="this.form.submit()">-->
-<!--      <option value="">-- Guruh tanlang --</option>-->
-<!--      {% for g in groups %}-->
-<!--        <option value="{{ g.id }}" {% if group and group.id == g.id %} selected {% endif %}>-->
-<!--          {{ g.name }}-->
-<!--        </option>-->
-<!--      {% endfor %}-->
-<!--    </select>-->
-<!--  </form>-->
-<div>
 <form method="get">
   <label>Guruhni tanlang:</label>
   <select name="group" onchange="this.form.submit()">
@@ -25,19 +11,19 @@
     {% endfor %}
   </select>
 </form>
-</div>
-</div>
-  {% if group %}
-    <form method="post" action="{% url 'save_attendance_matrix' %}">
+<div>
+    <h2>Davomat</h2>
+
+    <form method="post" action="{% url 'save_attendance_matrix' %}" id="attendance-form">
       {% csrf_token %}
       <input type="hidden" name="group_id" value="{{ group.id }}">
 
-      <table class="table table-bordered mt-3">
+      <table class="table table-bordered" id="attendance-table">
         <thead>
           <tr>
             <th>O'quvchilar</th>
             {% for d in dates %}
-              <th>{{ d|date:"d-m" }}</th>
+              <th>{{ d|date:"d-M" }}</th>
             {% endfor %}
           </tr>
         </thead>
@@ -46,47 +32,35 @@
             <tr>
               <td>{{ student.full_name }}</td>
               {% for d in dates %}
-              <td>
-                <input type="checkbox" name="attendance" value="{{ student.id }}_{{ d|date:'Y-m-d' }}"
-                {% if attendance_data|dict_get:student|dict_get:d == 'p' %}checked{% endif %}
-                {% if request.user.role == 't' and d != today %} disabled {% endif %}>
-              </td>
-<!--                              <td>-->
-<!--                  <input type="checkbox"-->
-<!--                         name="attendance"-->
-<!--                         value="{{ student.id }}_{{ d|date:'Y-m-d' }}"-->
-<!--                         {% if attendance_data|dict_get:student|dict_get:d == 'p' %}checked{% endif %}>-->
-<!--                </td>-->
-
-<!--              <td>-->
-<!--                <label>-->
-<!--                  <input type="radio"-->
-<!--                         name="attendance_{{ student.id }}_{{ d|date:'Y-m-d' }}"-->
-<!--                         value="{{ student.id }}_{{ d|date:'Y-m-d' }}_p"-->
-<!--                         {% if attendance_data|dict_get:student|dict_get:d == 'p' %}checked{% endif %}>-->
-<!--                  ✅-->
-<!--                </label>-->
-<!--                <label>-->
-<!--                  <input type="radio"-->
-<!--                         name="attendance_{{ student.id }}_{{ d|date:'Y-m-d' }}"-->
-<!--                         value="{{ student.id }}_{{ d|date:'Y-m-d' }}_a"-->
-<!--                         {% if attendance_data|dict_get:student|dict_get:d == 'a' %}checked{% endif %}>-->
-<!--                  ❌-->
-<!--                </label>-->
-<!--              </td>-->
-
+                {% with date_str=d|date:"Y-m-d" %}
+                  {% with status=attendance_data|dict_get:student.id|dict_get:date_str %}
+                    <td>
+                      <div class="status-toggle"
+                           data-student="{{ student.id }}"
+                           data-date="{{ date_str }}"
+                           {% if user.role == 't' and date_str != today %}
+                             data-disabled="true"
+                           {% endif %}
+                      >
+                        <input type="hidden" name="attendance" value="{{ student.id }}_{{ date_str }}_{{ status }}">
+                        <span class="status status-{{ status }}"></span>
+                      </div>
+                    </td>
+                  {% endwith %}
+                {% endwith %}
               {% endfor %}
             </tr>
           {% endfor %}
         </tbody>
       </table>
 
-      <button type="submit" class="btn btn-primary">Saqlash</button>
+      <button type="submit" class="btn btn-primary mt-3">Saqlash</button>
     </form>
-  {% else %}
-    <div class="alert alert-danger mt-3">
-      Guruh tanlanmagan yoki mavjud emas.
-    </div>
-  {% endif %}
 </div>
+
+{% endblock %}
+
+{% block extrahead %}
+  <link rel="stylesheet" href="{% static 'attendance/css/attendance.css' %}">
+  <script src="{% static 'attendance/js/attendance.js' %}"></script>
 {% endblock %}
