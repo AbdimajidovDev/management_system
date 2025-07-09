@@ -1,0 +1,25 @@
+.status {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.status-e {
+  background-color: #f8f9fa;
+}
+
+.status-p {
+  background-color: #d4edda;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 16 16' fill='green' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M13.4853 1.87868L5.99997 9.36401L2.51463 5.87868L1.10042 7.29289L5.99997 12.1924L14.8995 3.29289L13.4853 1.87868Z'/%3E%3C/svg%3E");
+}
+
+.status-a {
+  background-color: #f8d7da;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 16 16' fill='red' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4.64645 4.64645L11.3137 11.3137M11.3137 4.64645L4.64645 11.3137' stroke='black' stroke-width='2'/%3E%3C/svg%3E");
+}
