@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib import admin
 from django import forms
 
@@ -7,11 +9,18 @@ from app.students.models import Student
 
 from datetime import timedelta, date
 
+from app.users.models import User
+
 
 class AttendanceForm(forms.ModelForm):
     class Meta:
         model = Attendance
         fields = ('student', 'group', 'status', 'date')
+
+    def get_groups(self, obj):
+        return obj.groups.all()
+    get_groups.short_description = "Groups"
+
 
 class AttendanceInline(admin.TabularInline):
     model = Attendance
@@ -42,23 +51,19 @@ class AttendanceAdmin(admin.ModelAdmin):
         start_date = group.start_date
         end_date = group.end_date
 
-        # Tizimga asoslangan kunlar
-        if group.type == 'e':  # juft
-            if start_date.day % 2 != 0:
-                start_date += timedelta(days=1)
-            days = (end_date - start_date).days + 1
-            dates = [start_date + timedelta(days=i) for i in range(0, days, 2) if
-                     (start_date + timedelta(days=i)).weekday() != 6]
-        elif group.type == 'o':  # toq
-            if start_date.day % 2 == 0:
-                start_date += timedelta(days=1)
-            days = (end_date - start_date).days + 1
-            dates = [start_date + timedelta(days=i) for i in range(0, days, 2) if
-                     (start_date + timedelta(days=i)).weekday() != 6]
-        else:  # har kuni
-            days = (end_date - start_date).days + 1
-            dates = [start_date + timedelta(days=i) for i in range(days) if
-                     (start_date + timedelta(days=i)).weekday() != 6]
+        if group.type == 'e':
+            lesson_weekdays = [1, 3, 5]
+        elif group.type == 'o':
+            lesson_weekdays = [0, 2, 4,]
+        else:
+            lesson_weekdays = [0, 1, 2, 3, 4, 5]
+
+        days = (end_date - start_date).days + 1
+        dates = [
+            start_date + timedelta(days=i)
+            for i in range(days)
+            if (start_date + timedelta(days=i)).weekday() in lesson_weekdays
+        ]
 
         # Attendance statuslarini yig'amiz
         attendance_data = {}
@@ -78,12 +83,21 @@ class AttendanceAdmin(admin.ModelAdmin):
             'today': date.today().strftime('%Y-%m-%d'),
             'user': request.user,
         })
+
+        # print('group: ', group.price)
+        # # print('request', request.GET.get('group_id'))
+        # print('davomat', Attendance.objects.all())
+        # print('davomat', Attendance.objects.filter(status='p').count())
+        # print('group_id', group_id)
+        # print('groups', groups)
+        # print('------------')
+
         return super().changelist_view(request, extra_context=extra_context)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         user = request.user
-        if user.role == 't':
+        if user.role == User.UserRoles.teacher:
             return qs.filter(group__teacher=user)
         return qs
 
