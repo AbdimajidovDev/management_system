@@ -1,17 +1,18 @@
-from django.http import HttpResponseBadRequest
-from django.shortcuts import redirect
 from datetime import datetime
 from rest_framework import viewsets
 from rest_framework.exceptions import PermissionDenied
 
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+
 from app.users.models import User
 from app.users.utility import IsTeacher, IsAdminOrSuperAdmin
-from .serializers import AttendanceSerializer
-# from .models import Attendance, Student, Group
-from .models import Attendance
-from app.groups.models import Group
 from app.students.models import Student
+from app.groups.models import Group
 
+from .models import Attendance
+from .serializers import AttendanceSerializer
 
 
 class AttendanceViewSet(viewsets.ModelViewSet):
@@ -49,34 +50,39 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         serializer.save()
 
 
-def save_attendance_matrix(request):
-    if request.method == 'POST':
-        group_id = request.POST.get('group_id')
-        if not group_id:
-            return HttpResponseBadRequest("Guruh ID topilmadi.")
+@csrf_exempt
+def save_attendance(request):
 
-        try:
-            group = Group.objects.get(id=group_id)
-        except Group.DoesNotExist:
-            return HttpResponseBadRequest("Bunday guruh mavjud emas.")
+    if request.method == "POST":
+        group_id = request.POST.get("group_id")
+        group = Group.objects.filter(id=group_id).first()
 
-        selected = request.POST.getlist('attendance')  # ['1_2025-07-08_p', '2_2025-07-08_a', ...]
+        if not group:
+            messages.error(request, "Guruh topilmadi!")
+            return redirect(request.META.get('HTTP_REFERER', '/'))
 
-        Attendance.objects.filter(group=group).delete()
+        attendance_values = request.POST.getlist("attendance")
 
-        for item in selected:
-            student_id, date_str, status = item.split('_')
-            student = Student.objects.get(id=student_id)
-            date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        for item in attendance_values:
+            try:
+                student_id, date_str, status = item.split("_")
+                date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
 
-            Attendance.objects.create(
-                student=student,
-                group=group,
-                date=date,
-                status=status
-            )
-        print(group.name, group_id)
+                student = Student.objects.get(id=student_id)
 
-        return redirect(f"/admin/attendance/attendance/?group_id={group_id}")
+                if status not in ['p', 'a', 'e']:
+                    continue
 
-    return HttpResponseBadRequest("Faqat POST so‘rovlarga ruxsat bor.")
+                Attendance.objects.update_or_create(
+                    student=student,
+                    group=group,
+                    date=date_obj,
+                    defaults={'status': status}
+                )
+
+            except Exception as e:
+                print(f"Xatolik: {e}")
+                continue
+
+        messages.success(request, "Davomat muvaffaqiyatli saqlandi!")
+        return redirect(f"/admin/attendance/attendance/?group={group_id}")

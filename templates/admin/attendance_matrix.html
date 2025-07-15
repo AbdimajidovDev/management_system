@@ -1,8 +1,13 @@
+
 {% extends "admin/base_site.html" %}
 {% load static %}
+{% load unfold %}
 {% load attendance_extras %}
 {% block content %}
 
+<div>
+    <b><h1>Davomat</h1></b>
+</div>
 <form method="get">
   <label>Guruhni tanlang:</label>
   <select name="group" onchange="this.form.submit()">
@@ -11,38 +16,58 @@
     {% endfor %}
   </select>
 </form>
+
 <div>
-    <h2>Davomat</h2>
+    <div>
 
-    <form method="post" action="{% url 'save_attendance_matrix' %}" id="attendance-form">
-      {% csrf_token %}
-      <input type="hidden" name="group_id" value="{{ group.id }}">
+        <form method="get" action="">
+    <label for="month">Month:</label>
+    <select name="month" onchange="this.form.submit()">
+        {% for m in months %}
+            <option value="{{ m.value }}" {% if selected_month == m.value %}selected{% endif %}>
+                {{ m.label }}
+            </option>
+        {% endfor %}
+    </select>
+    <input type="hidden" name="group" value="{{ group.id }}">
+</form>
 
-      <table class="table table-bordered" id="attendance-table">
+    </div>
+</div>
+
+<div>
+    <form method="post" action="{% url 'save_attendance' %}" id="attendance-form">
+    {% csrf_token %}
+        <input type="hidden" name="group_id" value="{{ group.id }}">
+        <table class="table table-bordered" id="attendance-table">
+
         <thead>
           <tr>
+
             <th>O'quvchilar</th>
+
             {% for d in dates %}
               <th>{{ d|date:"d-M" }}</th>
             {% endfor %}
+
           </tr>
         </thead>
         <tbody>
           {% for student in students %}
             <tr>
-              <td>{{ student.full_name }}</td>
+              <td>{{ student.student.full_name }}</td>
               {% for d in dates %}
                 {% with date_str=d|date:"Y-m-d" %}
-                  {% with status=attendance_data|dict_get:student.id|dict_get:date_str %}
+                  {% with status=attendance_data|dict_get:student.student.id|dict_get:date_str %}
                     <td>
                       <div class="status-toggle"
-                           data-student="{{ student.id }}"
+                           data-student="{{ student.student.id }}"
                            data-date="{{ date_str }}"
                            {% if user.role == 't' and date_str != today %}
                              data-disabled="true"
                            {% endif %}
                       >
-                        <input type="hidden" name="attendance" value="{{ student.id }}_{{ date_str }}_{{ status }}">
+                        <input type="hidden" name="attendance" value="{{ student.student.id }}_{{ date_str }}_{{ status|default:'e' }}">
                         <span class="status status-{{ status }}"></span>
                       </div>
                     </td>
