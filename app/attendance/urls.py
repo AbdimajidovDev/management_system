@@ -8,5 +8,5 @@ router.register('attendance', AttendanceViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path("save/", save_attendance_matrix, name="save_attendance_matrix"),
+    path("save/", save_attendance, name="save_attendance"),
 ]

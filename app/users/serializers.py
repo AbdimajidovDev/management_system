@@ -32,8 +32,8 @@ class CreateUserSerializer(serializers.ModelSerializer):
         if password:
             validate_password(password)
 
-        if salary.isalnum():
-            raise ValidationError({'salary': 'Salary is invalid'})
+        # if salary.isalnum():
+        #     raise ValidationError({'salary': 'Salary is invalid'})
 
         return attrs
 
