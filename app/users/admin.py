@@ -1,15 +1,21 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
+from django.contrib.auth.models import Group
 
+from unfold.forms import AdminPasswordChangeForm, UserChangeForm, UserCreationForm
+from unfold.admin import ModelAdmin
 from app.users.models import User
 
 
+# admin.site.unregister(User)
+admin.site.unregister(Group)
 
 @admin.register(User)
-class UserAdmin(UserAdmin):
+class UserAdmin(BaseUserAdmin, ModelAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
+    change_password_form = AdminPasswordChangeForm
 
     list_display = ("phone_number", "full_name", "role", "is_staff")
     list_filter = ("role", "is_staff")
@@ -29,3 +35,8 @@ class UserAdmin(UserAdmin):
 
     search_fields = ("phone_number", "first_name", "last_name")
     ordering = ("phone_number",)
+
+
+@admin.register(Group)
+class GroupAdmin(BaseGroupAdmin, ModelAdmin):
+    pass
