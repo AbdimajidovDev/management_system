@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from app.attendance.models import Attendance
-from app.students.models import Student
+from app.students.models import Student, StudentGroup
 from app.users.models import User
 
 
@@ -13,7 +13,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ('id', 'full_name', 'phone_number', 'parents_phone_number', 'group')
+        fields = ('id', 'full_name', 'phone_number', 'parents_phone_number')
         extra_kwargs = {'phone_number': {'validators': []}}
 
     def validate(self, attrs):
@@ -76,23 +76,9 @@ class StudentSerializer(serializers.ModelSerializer):
             })
         return phone_number
 
-    # def get_attendance_stats(self, obj):
-    #     group = obj.group
-    #
-    #     if not group:
-    #         return Response("Group not found", status=status.HTTP_404_NOT_FOUND)
-    #
-    #     attendances = Attendance.objects.filter(student=obj, group=group)
-    #
-    #     total = attendances.count()
-    #     present = attendances.filter(status='p').count()
-    #     absent = attendances.filter(status='a').count()
-    #     percentage = round((present / total) * 100, 2) if total else 0
-    #
-    #     return {
-    #         'group_name': group.name,
-    #         'total_classes': total,
-    #         'present': present,
-    #         'absent': absent,
-    #         'attendance_percentage': percentage,
-    #     }
+
+class StudentGroupSerializer(serializers.Serializer):
+    class Meta:
+        model = StudentGroup
+        fields = ('student', 'group')
+        read_only_fields = ('id',)

@@ -8,8 +8,20 @@ class Student(BaseModel):
     full_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=13, unique=True)
     parents_phone_number = models.CharField(max_length=13, blank=True, null=True)
-    group = models.ForeignKey(Group, on_delete=models.SET_NULL, null=True, related_name="students")
-    is_paid = models.BooleanField(default=False)
+    groups = models.ManyToManyField(Group, through="StudentGroup")
 
     def __str__(self):
         return f"{self.full_name} student"
+
+
+class StudentGroup(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    is_paid = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('student', 'group')
+
+    def __str__(self):
+        return f"{self.group} - {self.student.full_name}"

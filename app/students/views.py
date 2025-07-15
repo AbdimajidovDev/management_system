@@ -1,12 +1,12 @@
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.attendance.models import Attendance
 from app.attendance.serializers import AttendanceSerializer
-from app.students.models import Student
-from app.students.serializers import StudentSerializer
+from app.students.models import Student, StudentGroup
+from app.students.serializers import StudentSerializer, StudentGroupSerializer
 from app.users.utility import IsAdminOrSuperAdmin
 
 
@@ -41,3 +41,9 @@ class StudentViewSet(viewsets.ModelViewSet):
             'attendance_percentage': percentage,
             'attendances': serializer.data
         }, status=status.HTTP_200_OK)
+
+@extend_schema(tags=['student-payment'], responses=StudentGroupSerializer(many=True))
+class StudentGroupViewSet(generics.ListCreateAPIView):
+    permission_classes = (IsAdminOrSuperAdmin, )
+    queryset = StudentGroup.objects.all()
+    serializer_class = StudentGroupSerializer

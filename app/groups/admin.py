@@ -1,16 +1,17 @@
-from django.contrib import admin
-
+from django.contrib import admin as django_admin
+from unfold import admin
 from app.attendance.admin import AttendanceInline
 from app.groups.models import Group
-from app.students.models import Student
+from app.students.models import Student, StudentGroup
 
 
 class StudentInline(admin.TabularInline):
-    model = Student
+    model = StudentGroup
+    fields = ('student', 'is_paid')
     extra = 1
 
 class GroupAdmin(admin.ModelAdmin):
-    inlines = [AttendanceInline, StudentInline]
+    inlines = [StudentInline, AttendanceInline]
     list_display = ('name', 'teacher', 'price', 'start_date', 'end_date', 'type')
     search_fields = ('name', 'teacher')
     list_filter = ('teacher', 'type')
@@ -24,4 +25,4 @@ class GroupAdmin(admin.ModelAdmin):
             return qs.filter(teacher=user)
         return qs
 
-admin.site.register(Group, GroupAdmin)
+django_admin.site.register(Group, GroupAdmin)
