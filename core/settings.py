@@ -14,6 +14,13 @@ from datetime import timedelta
 from pathlib import Path
 from decouple import config, Csv
 
+
+
+from django.templatetags.static import static
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -34,7 +41,14 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',
+    'unfold',
+    "unfold.contrib.filters",  # optional, if special filters are needed
+    "unfold.contrib.forms",  # optional, if special form elements are needed
+    "unfold.contrib.inlines",  # optional, if special inlines are needed
+    "unfold.contrib.import_export",  # optional, if django-import-export package is used
+    "unfold.contrib.guardian",  # optional, if django-guardian package is used
+    "unfold.contrib.simple_history",  # optional, if django-simple-history package is used
+    "unfold.contrib.location_field",  # optional, if django-location-field package is used
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,6 +70,100 @@ INSTALLED_APPS = [
     'app.payments',
     'app.reports',
 ]
+
+
+
+from django.conf import settings
+from django.templatetags.static import static
+from django.utils.translation import gettext_lazy as _
+
+
+
+
+
+def environment_callback(request):
+    if settings.DEBUG:
+        return [_("Development"), "primary"]
+
+    return [_("Production"), "primary"]
+
+
+UNFOLD = {
+    "SITE_TITLE": "Oxford tc Management System",
+    "SITE_HEADER": "TC Management Admin",
+    "SITE_URL": "/",
+    "SITE_ICON": "/static/icon.jpg",
+    "SITE_FAVICONS": [
+        {
+            "rel": "icon",
+            "sizes": "32x32",
+            "type": "image/icon",
+            "href": lambda request: static("images/favicon.ico"),
+        },
+    ],
+    "SITE_SYMBOL": "speed",
+    "SHOW_HISTORY": True,
+    "SHOW_VIEW_ON_SITE": True,
+    "SHOW_BACK_BUTTON": True,
+    "ENVIRONMENT": "core.config.unfold.environment_callback",
+    "LOGIN": {
+        "image": lambda request: static("images/login.png"),
+    },
+    "STYLES": [
+        lambda request: static("css/tailwind.css"),
+    ],
+    "BORDER_RADIUS": "10px",
+    "COLORS": {
+        "base": {
+            "50": "250 250 250",
+            "100": "244 244 245",
+            "200": "228 228 231",
+            "300": "212 212 216",
+            "400": "161 161 170",
+            "500": "113 113 122",
+            "600": "82 82 91",
+            "700": "63 63 70",
+            "800": "39 39 42",
+            "900": "24 24 27",
+            "950": "9 9 11",
+        },
+        "font": {
+            "subtle-light": "var(--color-base-500)",  # text-base-500
+            "subtle-dark": "var(--color-base-400)",  # text-base-400
+            "default-light": "var(--color-base-600)",  # text-base-600
+            "default-dark": "var(--color-base-300)",  # text-base-300
+            "important-light": "var(--color-base-900)",  # text-base-900
+            "important-dark": "var(--color-base-100)",  # text-base-100
+        },
+        "primary": {
+            "50": "250 245 255",
+            "100": "243 232 255",
+            "200": "233 213 255",
+            "300": "216 180 254",
+            "400": "192 132 252",
+            "500": "168 85 247",
+            "600": "147 51 234",
+            "700": "126 34 206",
+            "800": "107 33 168",
+            "900": "88 28 135",
+            "950": "59 7 100"
+        },
+    },
+    # "EXTENSIONS": {
+    #     "modeltranslation": {
+    #         "flags": {
+    #             "uz": "🇺🇿",
+    #             "ru": "🇷🇺",
+    #             "en": "🇬🇧",
+    #         },
+    #     },
+    # },
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+    },
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
