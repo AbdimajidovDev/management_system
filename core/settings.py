@@ -15,11 +15,9 @@ from pathlib import Path
 from decouple import config, Csv
 
 
-
+from django.conf import settings
 from django.templatetags.static import static
-from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,13 +40,6 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 INSTALLED_APPS = [
     'unfold',
-    "unfold.contrib.filters",  # optional, if special filters are needed
-    "unfold.contrib.forms",  # optional, if special form elements are needed
-    "unfold.contrib.inlines",  # optional, if special inlines are needed
-    "unfold.contrib.import_export",  # optional, if django-import-export package is used
-    "unfold.contrib.guardian",  # optional, if django-guardian package is used
-    "unfold.contrib.simple_history",  # optional, if django-simple-history package is used
-    "unfold.contrib.location_field",  # optional, if django-location-field package is used
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -69,14 +60,8 @@ INSTALLED_APPS = [
     'app.attendance',
     'app.payments',
     'app.reports',
+    'app.common',
 ]
-
-
-
-from django.conf import settings
-from django.templatetags.static import static
-from django.utils.translation import gettext_lazy as _
-
 
 
 
@@ -149,19 +134,7 @@ UNFOLD = {
             "950": "59 7 100"
         },
     },
-    # "EXTENSIONS": {
-    #     "modeltranslation": {
-    #         "flags": {
-    #             "uz": "🇺🇿",
-    #             "ru": "🇷🇺",
-    #             "en": "🇬🇧",
-    #         },
-    #     },
-    # },
-    "SIDEBAR": {
-        "show_search": True,
-        "show_all_applications": True,
-    },
+
 }
 
 
@@ -310,8 +283,3 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
-
-# CELERY_BROKER_URL = config('CELERY_BROKER_URL')
-# CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND')
-# STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY')
-# STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
