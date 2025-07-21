@@ -1,3 +1,10 @@
+.status-e { background-color: #e2e8f0; }  /* Empty */
+.status-p { background-color: #22c55e; }  /* Present */
+.status-a { background-color: #ef4444; }  /* Absent */
+.status-l { background-color: #facc15; }  /* Late */
+.status { width: 18px; height: 18px; border-radius: 50%; display: inline-block; cursor: pointer; }
+
+
 .status {
   display: inline-block;
   width: 24px;
