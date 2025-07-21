@@ -5,7 +5,7 @@ from django.core.validators import FileExtensionValidator
 from django.db import models
 from rest_framework_simplejwt.tokens import RefreshToken
 
-# from app.users.utility import validate_phone_number
+from app.users.validation import validate_phone_number
 
 
 class BaseModel(models.Model):
@@ -38,6 +38,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         superadmin = 's', 'Super Admin'
         admin = 'a', 'Admin'
         teacher = 't', 'Teacher'
+        parent = 'p', 'Parent'
 
     avatar = models.ImageField(upload_to="avatar/",
                                validators=[FileExtensionValidator(["jpg", "jpeg", "png", "heic", "heif", "svg", "webp"])],
@@ -45,7 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(null=True, blank=True)
-    phone_number = models.CharField(max_length=13, unique=True) #, validators=validate_phone_number())
+    phone_number = models.CharField(max_length=13, unique=True, validators=[validate_phone_number])
     role = models.CharField(max_length=2, choices=UserRoles.choices, default=UserRoles.teacher)
     password = models.CharField(max_length=123)
     salary = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -68,3 +69,4 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
             'access': str(refresh.access_token),
             'refresh': str(refresh),
         }
+
