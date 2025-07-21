@@ -1,5 +1,4 @@
-
-# """oy ning oxirgi davomati qilinganda salary yaratiladi"""
+# """oy ning oxirgi davomati qilinganda salary yaratiladi."""
 
 
 # from django.db.models.signals import post_save
