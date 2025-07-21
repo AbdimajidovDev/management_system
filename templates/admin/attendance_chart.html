@@ -1,0 +1,77 @@
+<div class="px-6 py-4 bg-gray-50 border-t  justify-end">
+      <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700">
+        <b><a href="http://127.0.0.1:8000/admin/dashboard/"><h1>📊 Statistics</h1></a></b>
+      </button>
+</div>
+<br>
+
+
+<div class="mb-6">
+  <form method="get" class="flex items-center gap-4">
+    <div>
+      <label for="month" class="text-sm font-medium text-gray-700">Oy:</label>
+      <select id="month" name="month" class="border rounded px-3 py-2">
+        {% for m in months %}
+          <option value="{{ m.value }}" {% if m.value == selected_month %}selected{% endif %}>{{ m.label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="year" class="text-sm font-medium text-gray-700">Yil:</label>
+      <input type="number" name="year" value="{{ selected_year }}" class="border rounded px-3 py-2 w-24">
+    </div>
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Ko‘rsatish</button>
+  </form>
+</div>
+
+
+<canvas id="attendanceChart"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const labels = {{ labels|safe }};
+const totalData = {{ total_counts|safe }};
+const presentData = {{ present_counts|safe }};
+
+new Chart(document.getElementById('attendanceChart'), {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: 'Umumiy fandagi o‘quvchilar',
+                data: totalData,
+                type: 'line',
+                borderColor: '#3498db',
+                fill: false,
+                tension: 0.3
+            },
+            {
+                label: 'Bugun kelganlar',
+                data: presentData,
+                backgroundColor: '#2ecc71'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    afterLabel: function(context) {
+                        const dayTotal = totalData[context.dataIndex];
+                        const dayPresent = presentData[context.dataIndex];
+                        const percent = ((dayPresent / dayTotal) * 100).toFixed(1);
+                        return `(${percent}%)`;
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                suggestedMax: Math.max(...totalData)
+            }
+        }
+    }
+});
+</script>
