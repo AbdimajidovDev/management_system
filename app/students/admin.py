@@ -11,17 +11,19 @@ class StudentGroupInline(TabularInline):
     extra = 1
     show_change_link = True
 
+
 class StudentAdmin(ModelAdmin):
     inlines = [StudentGroupInline]
 
-    list_display = ('full_name', 'phone_number', 'parents_phone_number', 'get_groups')
+    list_display = ('full_name', 'phone_number', 'parents_phone_number', 'get_groups', 'is_active')
     list_display_links = ('full_name',)
     search_fields = ('full_name',)
+    list_filter = ('is_active',)
 
     def get_groups(self, obj):
         return ", ".join([g.name for g in obj.groups.all()])
-    get_groups.short_description = 'Groups'
 
+    get_groups.short_description = 'Groups'
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -39,5 +41,14 @@ class StudentGroupAdmin(unfold_admin.ModelAdmin):
     list_display_links = ('student', 'group')
     search_fields = ('student', 'group')
     list_filter = ('group', 'is_paid')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        user = request.user
+
+        if hasattr(user, 'role') and  user.role == User.UserRoles.parent:
+            return qs.filter(student__parent=user)
+        return qs
+
 
 django_admin.site.register(StudentGroup, StudentGroupAdmin)

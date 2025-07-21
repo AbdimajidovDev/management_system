@@ -1,7 +1,7 @@
 from django.db import models
 
 from app.groups.models import Group
-from app.users.models import BaseModel
+from app.users.models import BaseModel, User
 
 
 class Student(BaseModel):
@@ -9,6 +9,11 @@ class Student(BaseModel):
     phone_number = models.CharField(max_length=13, unique=True)
     parents_phone_number = models.CharField(max_length=13, blank=True, null=True)
     groups = models.ManyToManyField(Group, through="StudentGroup")
+    parent = models.ForeignKey(User, on_delete=models.SET_NULL,
+                               limit_choices_to={'role': User.UserRoles.parent},
+                               blank=True, null=True,
+                               related_name='children')
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.full_name} student"

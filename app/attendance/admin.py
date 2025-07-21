@@ -1,17 +1,13 @@
 from calendar import month_name
-from datetime import datetime
+from datetime import datetime, timedelta, date
 from django.contrib import admin as django_admin
 from django.shortcuts import render
-from django.utils.timezone import now
 from unfold import admin as unfold_admin
 from django import forms
 
 from app.attendance.models import Attendance
 from app.groups.models import Group
-from app.students.models import Student, StudentGroup
-
-from datetime import timedelta, date
-
+from app.students.models import StudentGroup
 from app.users.models import User
 
 
@@ -40,9 +36,13 @@ class AttendanceAdmin(unfold_admin.ModelAdmin):
         user = request.user
         students = StudentGroup.objects.none()
 
-        # Guruhlarni filtrlaymiz
-        if user.role == 't':
+        # Group filter
+        if user.role == User.UserRoles.teacher:
             groups = Group.objects.filter(teacher=user)
+        elif user.role == User.UserRoles.parent:
+            groups = Group.objects.filter(
+                id__in=StudentGroup.objects.filter(student__parent=user).values('group_id')
+            ).distinct()
         else:
             groups = Group.objects.all()
 
@@ -55,9 +55,7 @@ class AttendanceAdmin(unfold_admin.ModelAdmin):
         # Hozirgi sana va tanlangan oy
         current_date = date.today()
         selected_month = request.GET.get('month', current_date.strftime('%Y-%m'))
-        group_id = request.GET.get('group')
-        print('group_id:', group_id)
-
+        # group_id = request.GET.get('group')
 
         # Tanlangan oy bo‘yicha start va end
         try:
@@ -72,9 +70,9 @@ class AttendanceAdmin(unfold_admin.ModelAdmin):
             month_end = selected_date.replace(month=selected_date.month + 1, day=1)
 
         # Guruh dars kunlari
-        if group.type == 'e':
+        if group.type == group.GroupType.even:
             lesson_weekdays = [1, 3, 5]
-        elif group.type == 'o':
+        elif group.type == group.GroupType.odd:
             lesson_weekdays = [0, 2, 4]
         else:
             lesson_weekdays = [0, 1, 2, 3, 4, 5]
@@ -111,8 +109,6 @@ class AttendanceAdmin(unfold_admin.ModelAdmin):
                 att = Attendance.objects.filter(student=student.student, group=group, date=d).first()
                 attendance_data[student.student.id][d.strftime('%Y-%m-%d')] = att.status if att else 'e'
 
-        print('request:', request)
-
         extra_context = extra_context or {}
         extra_context.update({
             'students': students,
@@ -137,6 +133,5 @@ class AttendanceAdmin(unfold_admin.ModelAdmin):
         return qs
 
 django_admin.site.register(Attendance, AttendanceAdmin)
-
 
 # # # -------------------------------------------------------------------------------------------->
