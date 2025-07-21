@@ -9,7 +9,7 @@
 <div class="mb-6">
   <form method="get" class="flex items-center gap-4">
     <div>
-      <label for="month" class="text-sm font-medium text-gray-700">Oy:</label>
+      <label for="month" class="text-sm font-medium text-gray-700">Month:</label>
       <select id="month" name="month" class="border rounded px-3 py-2">
         {% for m in months %}
           <option value="{{ m.value }}" {% if m.value == selected_month %}selected{% endif %}>{{ m.label }}</option>
@@ -17,10 +17,10 @@
       </select>
     </div>
     <div>
-      <label for="year" class="text-sm font-medium text-gray-700">Yil:</label>
+      <label for="year" class="text-sm font-medium text-gray-700">Year:</label>
       <input type="number" name="year" value="{{ selected_year }}" class="border rounded px-3 py-2 w-24">
     </div>
-    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Ko‘rsatish</button>
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Show</button>
   </form>
 </div>
 
@@ -38,7 +38,7 @@ new Chart(document.getElementById('attendanceChart'), {
         labels: labels,
         datasets: [
             {
-                label: 'Umumiy fandagi o‘quvchilar',
+                label: 'General science students',
                 data: totalData,
                 type: 'line',
                 borderColor: '#3498db',
@@ -46,7 +46,7 @@ new Chart(document.getElementById('attendanceChart'), {
                 tension: 0.3
             },
             {
-                label: 'Bugun kelganlar',
+                label: 'Those who came today',
                 data: presentData,
                 backgroundColor: '#2ecc71'
             }

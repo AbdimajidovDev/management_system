@@ -1,0 +1,100 @@
+
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+
+<div id="content-main">
+    <h1 class="text-2xl font-semibold font-bold mb-4">📊 C**</h1>
+</div>
+
+<div class="px-6 py-4 bg-gray-50 border-t  justify-end">
+      <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700">
+        <b><a href="http://127.0.0.1:8000/admin/dashboard/attendance-chart/"><h1>📈 View Attendance Statistics</h1></a></b>
+      </button>
+</div>
+<br>
+
+<div class="p-6">
+    <div class="grid grid-cols-2 gap-6">
+        <!-- Pie Chart -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-2xl  mb-4">Course statistics</h2>
+            <canvas id="studentsPieChart" class="w-full h-64"></canvas>
+        </div>
+
+
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h1 class="text-2xl font-bold mb-4">📊 Monthly Student Statistics</h1>
+        <canvas id="studentsBarChart" class="w-full h-96"></canvas>
+    </div>
+
+    </div>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const labels = {{ labels|safe }};
+    const dataValues = {{ data|safe }};
+
+    const months = {{ months|safe }};
+    const addedData = {{ added|safe }};
+    const removedData = {{ removed|safe }};
+    const activeData = {{ active|safe }};
+
+
+
+    // Pie Chart
+    new Chart(document.getElementById('studentsPieChart'), {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: dataValues,
+                backgroundColor: [
+                    '#9c00c8', '#2d95fb', '#f39c12', '#ff0e03', '#00c84b', '#fb2dac', '#03fffd', '#f2fb2d'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'right' }
+            }
+        }
+    });
+
+    // Bar Chart
+     new Chart(document.getElementById('studentsBarChart'), {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [
+                {
+                    label: 'Qo‘shilganlar',
+                    data: addedData,
+                    backgroundColor: '#2ecc71' // green
+                },
+                {
+                    label: 'Ketganlar',
+                    data: removedData,
+                    backgroundColor: '#e74c3c' // red
+                },
+                {
+                    label: 'Aktivlar',
+                    data: activeData,
+                    backgroundColor: '#3498db' // blue
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
+{% endblock %}
