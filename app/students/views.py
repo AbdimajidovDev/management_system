@@ -7,7 +7,7 @@ from app.attendance.models import Attendance
 from app.attendance.serializers import AttendanceSerializer
 from app.students.models import Student, StudentGroup
 from app.students.serializers import StudentSerializer, StudentGroupSerializer
-from app.users.utility import IsAdminOrSuperAdmin
+from app.users.permissions import IsAdminOrSuperAdmin
 
 
 class StudentViewSet(viewsets.ModelViewSet):
