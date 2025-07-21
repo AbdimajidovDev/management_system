@@ -4,7 +4,7 @@ from django.shortcuts import render
 from drf_spectacular.utils import extend_schema
 
 from app.groups.models import Group
-from app.reports.utility import calculate_teacher_salary
+from app.common.utility import calculate_teacher_salary
 
 
 @extend_schema(tags=['teacher'])

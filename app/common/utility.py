@@ -1,10 +1,14 @@
 import datetime
 from calendar import monthrange
 from decimal import Decimal
-
 from django.db.models import Sum
 
 from app.attendance.models import Attendance
+from app.payments.models import Payment
+
+
+# //----------------------------------------------------------------------------------->
+
 
 def get_lesson_days(group, start_date, end_date):
 
@@ -23,23 +27,18 @@ def get_lesson_days(group, start_date, end_date):
     ]
     return dates
 
+
 def calculate_teacher_salary(group, month, year, percentage=50):
 
     first_day = datetime.date(year, month, 1)
     last_day = datetime.date(year, month, monthrange(year, month)[1])
-
     lesson_days = get_lesson_days(group, first_day, last_day)
-    print('lesson days: ////// ', len(lesson_days))
     active_dates = [d for d in lesson_days if d >= group.start_date]
-
     course_price = group.price
-
     attendances = Attendance.objects.filter(
         group=group,
         date__in=active_dates,
     )
-
-    print('lesson_days: ', lesson_days)
 
     attendance_count = attendances.exclude(status='e').count()
 
@@ -47,8 +46,6 @@ def calculate_teacher_salary(group, month, year, percentage=50):
         return 0
 
     total_sum = (course_price / len(lesson_days)) * attendance_count
-    # total_sum = (course_price / lesson_days) *
-
     salary = total_sum * Decimal(percentage / 100)
     return round(salary)
 
@@ -59,21 +56,22 @@ def attendance_count_view(group, month, year):
         date__year=year,
         date__month=month,
     )
-    # print('attendances:', attendances)
     attendance_count = attendances.exclude(status='e').count()
     return attendance_count
 
+# //----------------------------------------------------------------------------------->
 
 def total_teacher_salary():
-    from .models import TeacherSalary
+    from app.reports.models import TeacherSalary
 
     total_salary = TeacherSalary.objects.aggregate(total=Sum('salary'))['total']
-    print('total_salary:', total_salary)
     return total_salary
 
-def student_fees_view():
-    from app.payments.models import Payment
 
+def student_fees_view():
     student_fees = Payment.objects.aggregate(total=Sum('amount'))['total']
-    print('student_fees:', student_fees)
     return student_fees
+
+# //----------------------------------------------------------------------------------->
+
+
