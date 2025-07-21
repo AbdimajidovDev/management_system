@@ -14,15 +14,25 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+
 from drf_spectacular.views import SpectacularSwaggerView, SpectacularRedocView, SpectacularAPIView
+
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenVerifyView, TokenRefreshView
 
+from app.common.views import attendance_chart_view, dashboard_view
+
+
+
 urlpatterns = [
+    path('admin/dashboard/attendance-chart/', attendance_chart_view, name='attendance-chart'),
+    path('admin/dashboard/', dashboard_view, name='custom-dashboard'),
     path('admin/', admin.site.urls),
+
     path('users/', include('app.users.urls')),
     path('groups/', include('app.groups.urls')),
     path('students/', include('app.students.urls')),
@@ -31,9 +41,9 @@ urlpatterns = [
     path('reports/', include('app.reports.urls')),
 
     # JWT
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # login
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # refresh
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),  # tokenni tekshirish
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
     # swagger
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
