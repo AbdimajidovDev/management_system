@@ -5,8 +5,8 @@ from app.students.models import StudentGroup
 
 def dashboard_view(request):
     months = [
-        "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
-        "Iyul", "Avgust", "Sentabr", "Oktabr", "Noyabr", "Dekabr"
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
     ]
 
     current_year = now().year

@@ -5,7 +5,7 @@
 {% block content %}
 
 <div id="content-main">
-    <h1 class="text-2xl font-semibold font-bold mb-4">📊 C**</h1>
+    <h1 class="text-2xl font-semibold font-bold mb-4">📊 Statistics</h1>
 </div>
 
 <div class="px-6 py-4 bg-gray-50 border-t  justify-end">
@@ -19,7 +19,7 @@
     <div class="grid grid-cols-2 gap-6">
         <!-- Pie Chart -->
         <div class="bg-white p-6 rounded-lg shadow">
-            <h2 class="text-2xl  mb-4">Course statistics</h2>
+            <h2 class="text-2xl  mb-4">📊 Course statistics</h2>
             <canvas id="studentsPieChart" class="w-full h-64"></canvas>
         </div>
 
@@ -31,7 +31,6 @@
 
     </div>
 </div>
-
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -73,17 +72,17 @@
             labels: months,
             datasets: [
                 {
-                    label: 'Qo‘shilganlar',
+                    label: 'Joined',
                     data: addedData,
                     backgroundColor: '#2ecc71' // green
                 },
                 {
-                    label: 'Ketganlar',
+                    label: 'Those who left',
                     data: removedData,
                     backgroundColor: '#e74c3c' // red
                 },
                 {
-                    label: 'Aktivlar',
+                    label: 'Assets',
                     data: activeData,
                     backgroundColor: '#3498db' // blue
                 }

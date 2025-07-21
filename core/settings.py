@@ -74,10 +74,10 @@ def environment_callback(request):
 
 
 UNFOLD = {
-    "SITE_TITLE": "Oxford tc Management System",
-    "SITE_HEADER": "TC Management Admin",
+    "SITE_TITLE": "Stanford Management System",
+    "SITE_HEADER": "Stanford Management Admin",
     "SITE_URL": "/",
-    "SITE_ICON": "/static/icon.jpg",
+    "SITE_ICON": "/media/logo/logo.png",
     "SITE_FAVICONS": [
         {
             "rel": "icon",
@@ -136,7 +136,6 @@ UNFOLD = {
     },
 
 }
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
