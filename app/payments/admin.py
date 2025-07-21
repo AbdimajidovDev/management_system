@@ -16,7 +16,7 @@ class PaymentAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
 
         if user.is_staff and hasattr(user, 'role') and user.role == User.UserRoles.teacher:
-            return qs.filter(student__group__teacher=user)
+            return qs.filter(group__teacher=user)
         return qs
 
 django_admin.site.register(Payment, PaymentAdmin)
