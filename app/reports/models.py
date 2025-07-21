@@ -1,11 +1,10 @@
 from datetime import datetime
 
-from django.core.exceptions import ValidationError
 from django.db import models
+from django.core.exceptions import ValidationError
 
 from app.groups.models import Group
-from app.payments.models import Payment
-from .utility import attendance_count_view, calculate_teacher_salary, total_teacher_salary, student_fees_view
+from app.common.utility import attendance_count_view, calculate_teacher_salary, total_teacher_salary, student_fees_view
 from app.users.models import User
 
 
@@ -54,7 +53,6 @@ class Report(models.Model):
         return f"{self.benefit} - {self.month}, {self.year}"
 
     def save(self, *args, **kwargs):
-        print('*****************************************************')
         self.student_fees = student_fees_view()
         self.teachers_salaries = total_teacher_salary()
         self.benefit = student_fees_view() - total_teacher_salary()

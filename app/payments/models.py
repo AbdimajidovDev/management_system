@@ -28,4 +28,4 @@ class Payment(BaseModel):
         student_group.save()
 
     def __str__(self):
-        return f"{self.student.full_name} - {self.group} - {self.amount} ming UZS"
+        return f"{self.student.full_name} - {self.group} - {self.amount} UZS"

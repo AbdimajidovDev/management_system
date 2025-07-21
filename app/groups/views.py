@@ -1,8 +1,10 @@
 from rest_framework import viewsets
 
-from app.groups.models import Group
 from app.groups.serializers import GroupSerializer
-from app.users.utility import *
+from app.users.permissions import *
+from app.attendance.models import Attendance
+from app.groups.models import Group
+
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -10,14 +12,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
-# ////////////////////////////////////////////////////////////////////////////
-
-
-from app.attendance.models import Attendance
-from app.groups.models import Group
-
-
-
+# # //----------------------------------------------------------------------------------->
 
 def calculate_teacher_salary(group: Group, month: int, year: int):
     lesson_dates = Attendance.objects.filter(
@@ -25,7 +20,6 @@ def calculate_teacher_salary(group: Group, month: int, year: int):
         date__year=year,
         date__month=month,
     ).values('date').distinct()
-
 
     lesson_count = lesson_dates.count()
 
@@ -42,5 +36,4 @@ def calculate_teacher_salary(group: Group, month: int, year: int):
     total_income = per_lesson_price * attendance_count
     salary = total_income // 2
 
-    # return salary
     return round(salary, 2)

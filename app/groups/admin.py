@@ -1,8 +1,10 @@
-from django.contrib import admin as django_admin
 from unfold import admin
+from django.contrib import admin as django_admin
+
 from app.attendance.admin import AttendanceInline
+from app.students.models import StudentGroup
 from app.groups.models import Group
-from app.students.models import Student, StudentGroup
+from app.users.models import User
 
 
 class StudentInline(admin.TabularInline):
@@ -19,9 +21,8 @@ class GroupAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         user = request.user
-        print('request: ', request)
 
-        if user.is_staff and hasattr(user, 'role') and user.role == user.UserRoles.teacher:
+        if user.is_staff and hasattr(user, 'role') and user.role == User.UserRoles.teacher:
             return qs.filter(teacher=user)
         return qs
 

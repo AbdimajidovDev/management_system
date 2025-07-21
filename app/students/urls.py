@@ -9,5 +9,4 @@ router.register('students', StudentViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    # path('students/<uuid:pk>/attendance-stats/', )
 ]

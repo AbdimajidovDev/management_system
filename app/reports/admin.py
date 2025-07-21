@@ -14,6 +14,7 @@ class TeacherSalaryAdmin(unfold_admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super(TeacherSalaryAdmin, self).get_queryset(request)
         user = request.user
+
         if user.role == User.UserRoles.teacher:
             return qs.filter(teacher=user)
         return qs

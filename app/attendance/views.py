@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 
 from app.users.models import User
-from app.users.utility import IsTeacher, IsAdminOrSuperAdmin
+from app.users.permissions import IsTeacher, IsAdminOrSuperAdmin
 from app.students.models import Student
 from app.groups.models import Group
 

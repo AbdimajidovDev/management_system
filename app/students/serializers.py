@@ -1,15 +1,11 @@
 import phonenumbers
-from rest_framework import serializers, status
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
-
-from app.attendance.models import Attendance
 from app.students.models import Student, StudentGroup
 from app.users.models import User
 
 
 class StudentSerializer(serializers.ModelSerializer):
-    # attendance_stats = serializers.SerializerMethodField()
 
     class Meta:
         model = Student
@@ -17,9 +13,7 @@ class StudentSerializer(serializers.ModelSerializer):
         extra_kwargs = {'phone_number': {'validators': []}}
 
     def validate(self, attrs):
-        print('attrs', attrs)
         parents_phone_number = attrs.get('parents_phone_number')
-        print('phoooooone', parents_phone_number)
 
         if not parents_phone_number:
             raise ValidationError({
@@ -49,7 +43,6 @@ class StudentSerializer(serializers.ModelSerializer):
 
 
     def validate_phone_number(self, phone_number):
-        print('phone_number: ', phone_number)
         if not phone_number:
             raise ValidationError({
                 'success': False,

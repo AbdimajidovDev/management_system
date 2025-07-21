@@ -3,7 +3,6 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from app.users.models import User
@@ -21,7 +20,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         password = attrs.get('password', None)
         confirm_password = attrs.get('confirm_password', None)
-        salary = attrs.get('salary', None)
+        # salary = attrs.get('salary', None)
 
         if password != confirm_password:
             raise ValidationError({
@@ -77,6 +76,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class LoginSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
@@ -112,8 +112,8 @@ class LoginSerializer(TokenObtainPairSerializer):
 
         self.user = user
         data = super().validate(attrs)
-        data['user'] = {
+        data['user'] = dict[
             'id': self.user.id,
             'full_name': user.full_name
-        }
+        ]
         return data
