@@ -36,6 +36,9 @@ class TeacherSalary(models.Model):
         super(TeacherSalary, self).save(*args, **kwargs)
 
     class Meta:
+        verbose_name_plural = "Teacher Salaries"
+        verbose_name = "Teacher Salary"
+
         unique_together = ('teacher', 'group', 'month', 'year')
 
     def __str__(self):
