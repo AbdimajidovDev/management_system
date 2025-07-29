@@ -175,7 +175,7 @@ class AttendanceAdmin(unfold_admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         if not Group.objects.exists():
             messages.warning(request, "Hech qanday guruh mavjud emas. Iltimos, avval guruh yarating.")
-            return redirect(reverse("admin:app_group_add"))
+            return redirect(reverse("admin:groups_group_add"))
 
         user = request.user
         students = StudentGroup.objects.none()
